@@ -1,4 +1,4 @@
-#VERSIONE MODIFICATA DA REDAREA
+# VERSIONE MODIFICATA DA REDAREA
 DISABILITATO IL RENDERING DELLE NOTIFICHE PUSH, per evitare le doppie notifiche
 causate dall'installazione del plugin Cordova Pushwoosh.
 

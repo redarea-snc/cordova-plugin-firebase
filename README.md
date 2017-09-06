@@ -1,3 +1,7 @@
+#VERSIONE MODIFICATA DA REDAREA
+DISABILITATO IL RENDERING DELLE NOTIFICHE PUSH, per evitare le doppie notifiche
+causate dall'installazione del plugin Cordova Pushwoosh.
+
 # cordova-plugin-firebase
 This plugin brings push notifications, analytics, event tracking, crash reporting and more from Google Firebase to your Cordova project!
 Android and iOS supported.

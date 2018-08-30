@@ -12,14 +12,16 @@ public class OnNotificationOpenReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         PackageManager pm = context.getPackageManager();
-        Intent launchIntent = pm.getLaunchIntentForPackage(context.getPackageName());
 
+        Intent launchIntent = pm.getLaunchIntentForPackage(context.getPackageName());
         launchIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+
         Bundle data = intent.getExtras();
         data.putBoolean("tap", true);
 
         System.out.println("#### REDAREA: DISABLED FIREBASE PLUGIN PUSH RENDERING (OnNotificationOpenReceiver) #####");
-        //FirebasePlugin.sendNotification(data);
+        //FirebasePlugin.sendNotification(data, context);
+
         launchIntent.putExtras(data);
         context.startActivity(launchIntent);
     }

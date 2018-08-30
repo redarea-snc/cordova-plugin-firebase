@@ -6,5 +6,6 @@
 .build-browser
 package-lock.json
 node_modules
+test
 cordova-plugin-firebase.code-workspace
 src/ios/Firebase

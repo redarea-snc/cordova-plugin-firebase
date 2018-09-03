@@ -25,12 +25,13 @@ module.exports = {
     xcodeProject.parseSync();
 
     // Build the body of the script to be executed during the build phase.
-    //var script = '"' + '\\"${SRCROOT}\\"' + "/\\\"" + utilities.getAppName(context) + "\\\"/Plugins/cordova-fabric-plugin/Fabric.framework/run " + pluginConfig.apiKey + " " + pluginConfig.apiSecret + '"';
+    var pluginConfig = utilities.getPluginConfig("ios");
+    var script = '"' + '\\"${SRCROOT}\\"' + "/\\\"" + utilities.getAppName(context) + "\\\"/Plugins/cordova-plugin-firebase/Fabric.framework/run " + pluginConfig.apiKey + " " + pluginConfig.apiSecret + '"';
 
     // Generate a unique ID for our new build phase.
     var id = xcodeProject.generateUuid();
     // Create the build phase.
-    /*xcodeProject.hash.project.objects.PBXShellScriptBuildPhase[id] = {
+    xcodeProject.hash.project.objects.PBXShellScriptBuildPhase[id] = {
           isa: "PBXShellScriptBuildPhase",
           buildActionMask: 2147483647,
           files: [],
@@ -41,7 +42,7 @@ module.exports = {
           shellPath: "/bin/sh",
           shellScript: script,
           showEnvVarsInLog: 0
-        };*/
+        };
 
     // Add a comment to the block (viewable in the source of the pbxproj file).
     xcodeProject.hash.project.objects.PBXShellScriptBuildPhase[id + "_comment"] = comment;

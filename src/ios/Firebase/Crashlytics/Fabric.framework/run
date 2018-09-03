@@ -1,5 +1,5 @@
 #!/bin/sh
-
+echo "upload Crashlytics start"
 #  run
 #
 #  Copyright (c) 2015 Crashlytics. All rights reserved.
@@ -26,3 +26,4 @@ fi
 #  Note: Validation is performed again before upload.
 #  Output can still be found in Console.app
 eval $DIR$PATH_SEP$UPLOAD_COMMAND > /dev/null 2>&1 &
+echo "upload Crashlytics end"

@@ -48,11 +48,34 @@ var PLATFORM = {
     src: [
       'google-services.json',
       ANDROID_DIR + '/assets/www/google-services.json',
-      'www/google-services.json'
+      'www/google-services.json',
+      ANDROID_DIR + '/app/src/main/google-services.json'
     ],
     stringsXml: fileExists(ANDROID_DIR + '/app/src/main/res/values/strings.xml') ? ANDROID_DIR + '/app/src/main/res/values/strings.xml' : ANDROID_DIR + '/res/values/strings.xml'
   }
 };
+
+function updateStringsXml(contents) {
+    var json = JSON.parse(contents);
+    var strings = fs.readFileSync(PLATFORM.ANDROID.stringsXml).toString();
+
+    // replace the value
+    strings = strings.replace(new RegExp('<string name="google_app_id">([^<]+?)</string>', 'i'), '<string name="google_app_id">' + json.client[0].client_info.mobilesdk_app_id + '</string>');
+
+    // replace the value
+    strings = strings.replace(new RegExp('<string name="google_api_key">([^<]+?)</string>', 'i'), '<string name="google_api_key">' + json.client[0].api_key[0].current_key + '</string>');
+	
+	// strip default value if still present
+    strings = strings.replace(new RegExp('<string name="google_app_id">\@([^<]+?)</string>', 'i'), '');
+
+    // strip default value if still present
+    strings = strings.replace(new RegExp('<string name="google_api_key">\@([^<]+?)</string>', 'i'), '');
+
+    // strip empty lines
+    strings = strings.replace(new RegExp('(\r\n|\n|\r)[ \t]*(\r\n|\n|\r)', 'gm'), '$1');
+
+    fs.writeFileSync(PLATFORM.ANDROID.stringsXml, strings);
+}
 
 function copyKey (platform, callback) {
   for (var i = 0; i < platform.src.length; i++) {
@@ -81,12 +104,12 @@ function copyKey (platform, callback) {
   }
 }
 
-function getValue (config, name) {
-  var value = config.match(new RegExp('<' + name + '>(.*?)</' + name + '>', 'i'));
-  if (value && value[1]) {
-    return value[1];
+function getValue(config, name) {
+  var value = config.match(new RegExp('<' + name + '(.*?)>(.*?)</' + name + '>', 'i'));
+  if (value && value[2]) {
+    return value[2]
   } else {
-    return null;
+    return null
   }
 }
 
@@ -116,6 +139,6 @@ module.exports = function (context) {
   }
   if (platforms.indexOf('android') !== -1 && directoryExists(ANDROID_DIR)) {
     console.log('Preparing Firebase on Android');
-    copyKey(PLATFORM.ANDROID);
+    copyKey(PLATFORM.ANDROID, updateStringsXml);
   }
 };

@@ -372,8 +372,14 @@ static FirebasePlugin *firebasePlugin;
     [self.commandDelegate runInBackground:^{
         CDVPluginResult *pluginResult;
         NSString* name = [command.arguments objectAtIndex:0];
-        NSString *description = NSLocalizedString([command argumentAtIndex:1 withDefault:@"No Message Provided"], nil);
-        NSDictionary *parameters = @{ NSLocalizedDescriptionKey: description };
+        NSDictionary *parameters;
+        @try {
+          NSString *description = NSLocalizedString([command argumentAtIndex:1 withDefault:@"No Message Provided"], nil);
+          parameters = @{ NSLocalizedDescriptionKey: description };
+        }
+        @catch (NSException *execption) {
+          parameters = [command argumentAtIndex:1];
+        }
 
         if(self.analyticsInit){
           [FIRAnalytics logEventWithName:name parameters:parameters];
@@ -400,18 +406,16 @@ static FirebasePlugin *firebasePlugin;
 }
 
 - (void)setScreenName:(CDVInvokedUrlCommand *)command {
-    [self.commandDelegate runInBackground:^{
-        CDVPluginResult *pluginResult;
-        NSString* name = [command.arguments objectAtIndex:0];
+    CDVPluginResult *pluginResult;
+    NSString* name = [command.arguments objectAtIndex:0];
 
-        if(self.analyticsInit){
-          [FIRAnalytics setScreenName:name screenClass:NULL];
-          pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-        } else {
-          pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:ERRORINITANALYTICS];
-        }
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }];
+    if(self.analyticsInit){
+      [FIRAnalytics setScreenName:name screenClass:NULL];
+      pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    } else {
+      pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:ERRORINITANALYTICS];
+    }
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void)setUserId:(CDVInvokedUrlCommand *)command {

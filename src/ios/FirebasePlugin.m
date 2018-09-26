@@ -36,6 +36,12 @@ static FirebasePlugin *firebasePlugin;
 - (void)pluginInitialize {
     NSLog(@"Starting Firebase plugin");
     firebasePlugin = self;
+
+    if ([FIRApp defaultApp] == nil) {
+        [FIRApp configure];
+    }
+
+    [Fabric with:@[[Crashlytics class]]];
 }
 
 - (void)getId:(CDVInvokedUrlCommand *)command {

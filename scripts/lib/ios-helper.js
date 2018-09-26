@@ -1,12 +1,11 @@
 var fs = require("fs");
-var path = require("path");
 var utilities = require("./utilities");
 
 /**
  * This is used as the display text for the build phase block in XCode as well as the
  * inline comments inside of the .pbxproj file for the build script phase block.
  */
-var comment = "\"Fabric.io: Crashlytics\"";
+var comment = "\"Crashlytics\"";
 
 module.exports = {
 
@@ -25,8 +24,7 @@ module.exports = {
     xcodeProject.parseSync();
 
     // Build the body of the script to be executed during the build phase.
-    var pluginConfig = utilities.getPluginConfig("ios");
-    var script = '"' + '\\"${SRCROOT}\\"' + "/\\\"" + utilities.getAppName(context) + "\\\"/Plugins/cordova-plugin-firebase/Fabric.framework/run " + pluginConfig.apiKey + " " + pluginConfig.apiSecret + '"';
+    var script = '"' + '\\"${SRCROOT}\\"' + "/\\\"" + utilities.getAppName(context) + "\\\"/Plugins/" + utilities.getPluginId() + "/Fabric.framework/run" + '"';
 
     // Generate a unique ID for our new build phase.
     var id = xcodeProject.generateUuid();

@@ -77,8 +77,6 @@ public class FirebasePlugin extends CordovaPlugin {
                 FirebaseApp.initializeApp(context);
                 mFirebaseAnalytics = FirebaseAnalytics.getInstance(context);
                 mFirebaseAnalytics.setAnalyticsCollectionEnabled(true);
-                Fabric.with(context, new Crashlytics());
-
                 if (extras != null && extras.size() > 1) {
                     if (FirebasePlugin.notificationStack == null) {
                         FirebasePlugin.notificationStack = new ArrayList<Bundle>();

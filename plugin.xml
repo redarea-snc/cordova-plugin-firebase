@@ -6,9 +6,6 @@ xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<license>MIT</license>
 
-	<preference name="FABRIC_API_KEY" />
-	<preference name="FABRIC_API_SECRET" />
-
 	<engines>
 		<engine name="cordova" version=">=3.2.0" />
 	</engines>
@@ -32,11 +29,6 @@ xmlns:android="http://schemas.android.com/apk/res/android">
 				<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 				<uses-permission android:name="android.permission.WAKE_LOCK" />
 		</config-file>
-
-		<config-file target="AndroidManifest.xml" parent="application">
-			<meta-data android:name="io.fabric.ApiKey" android:value="$FABRIC_API_KEY"/>
-		</config-file>
-
 		<config-file target="AndroidManifest.xml" parent="/manifest/application">
 			<service android:enabled="true" android:exported="false" android:name="com.google.android.gms.measurement.AppMeasurementService" />
 		</config-file>
@@ -90,22 +82,6 @@ xmlns:android="http://schemas.android.com/apk/res/android">
 		</config-file>
 		<config-file parent="aps-environment" target="*/Entitlements-Release.plist">
 			<string>production</string>
-		</config-file>
-
-		<config-file target="*-Info.plist" parent="Fabric">
-			<dict>
-				<key>APIKey</key>
-				<string>$FABRIC_API_KEY</string>
-				<key>Kits</key>
-				<array>
-					<dict>
-						<key>KitInfo</key>
-						<dict/>
-						<key>KitName</key>
-						<string>Crashlytics</string>
-					</dict>
-				</array>
-			</dict>
 		</config-file>
 
 		<resource-file src="src/ios/GoogleService-Info.plist" />

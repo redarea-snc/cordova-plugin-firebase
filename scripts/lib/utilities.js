@@ -1,11 +1,22 @@
 /**
  * Utilities and shared functionality for the build hooks.
  */
-
+var fs = require('fs');
 var path = require("path");
 
-module.exports = {
+fs.ensureDirSync = function (dir) {
+  if (!fs.existsSync(dir)) {
+    dir.split(path.sep).reduce(function (currentPath, folder) {
+      currentPath += folder + path.sep;
+      if (!fs.existsSync(currentPath)) {
+        fs.mkdirSync(currentPath);
+      }
+      return currentPath;
+    }, '');
+  }
+};
 
+module.exports = {
   /**
      * Used to get the name of the application as defined in the config.xml.
      *
@@ -25,50 +36,86 @@ module.exports = {
     return "cordova-plugin-firebase";
   },
 
-  /**
-   * Used to get the plugin configuration for the given platform.
-   *
-   * The plugin configuration object will have the API and secret keys
-   * for the Fabric.io service that were specified when the plugin
-   * was installed.
-   *
-   * This configuration is obtained from, where "ios" is the platform name:
-   *    platforms/ios/ios.json
-   *
-   * @param {string} platform - The platform to get plugin configuration for, either "ios" or "android".
-   * @returns {string} The path to the platform's plugin JSON configuration file.
-   */
-  getPluginConfig: function(platform) {
+  copyKey: function (platform) {
+    for (var i = 0; i < platform.src.length; i++) {
+      var file = platform.src[i];
+      if (this.fileExists(file)) {
+        try {
+          var contents = fs.readFileSync(file).toString();
 
-      var platformConfigPath = path.join("..", "..", "..", platform + ".json");
+          try {
+            platform.dest.forEach(function (destinationPath) {
+              var folder = destinationPath.substring(0, destinationPath.lastIndexOf('/'));
+              fs.ensureDirSync(folder);
+              fs.writeFileSync(destinationPath, contents);
+            });
+          } catch (e) {
+            // skip
+          }
+        } catch (err) {
+          console.log(err);
+        }
 
-      var platformConfig = require(platformConfigPath);
-
-      var pluginId = this.getPluginId();
-
-
-      var apiKey = platformConfig.installed_plugins[pluginId].FABRIC_API_KEY;
-      var apiSecret = platformConfig.installed_plugins[pluginId].FABRIC_API_SECRET;
-
-      var config = {
-          apiKey: apiKey,
-          apiSecret: apiSecret
-      };
-
-      return config;
+        break;
+      }
+    }
   },
 
-  /**
-     * Used to get the path to the XCode project's .pbxproj file.
+    /**
+     * Used to get the plugin configuration for the given platform.
      *
-     * @param {object} context - The Cordova context.
-     * @returns The path to the XCode project's .pbxproj file.
+     * The plugin configuration object will have the API and secret keys
+     * for the Fabric.io service that were specified when the plugin
+     * was installed.
+     *
+     * This configuration is obtained from, where "ios" is the platform name:
+     *    platforms/ios/ios.json
+     *
+     * @param {string} platform - The platform to get plugin configuration for, either "ios" or "android".
+     * @returns {string} The path to the platform's plugin JSON configuration file.
      */
-  getXcodeProjectPath: function (context) {
+    getPluginConfig: function(platform) {
 
-    var appName = this.getAppName(context);
+        var platformConfigPath = path.join("..", "..", "..", platform + ".json");
 
-    return path.join("platforms", "ios", appName + ".xcodeproj", "project.pbxproj");
+        var platformConfig = require(platformConfigPath);
+
+        var pluginId = this.getPluginId();
+
+
+        var apiKey = platformConfig.installed_plugins[pluginId].FABRIC_API_KEY;
+        var apiSecret = platformConfig.installed_plugins[pluginId].FABRIC_API_SECRET;
+
+        var config = {
+            apiKey: apiKey,
+            apiSecret: apiSecret
+        };
+
+        return config;
+    },
+
+  getValue: function (config, name) {
+    var value = config.match(new RegExp('<' + name + '(.*?)>(.*?)</' + name + '>', 'i'));
+    if (value && value[2]) {
+      return value[2]
+    } else {
+      return null
+    }
   },
 
+  fileExists: function (path) {
+    try {
+      return fs.statSync(path).isFile();
+    } catch (e) {
+      return false;
+    }
+  },
+
+  directoryExists: function (path) {
+    try {
+      return fs.statSync(path).isDirectory();
+    } catch (e) {
+      return false;
+    }
+  }
 };

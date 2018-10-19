@@ -66,6 +66,8 @@
         [FIRApp configure];
     }
 
+    [Fabric with:@[[Crashlytics class]]];
+
     // [START set_messaging_delegate]
     [FIRMessaging messaging].delegate = self;
     // [END set_messaging_delegate]

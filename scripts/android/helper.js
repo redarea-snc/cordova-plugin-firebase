@@ -21,12 +21,12 @@ function addDependencies(buildGradle) {
   // find the known line to match
   var match = buildGradle.match(/^(\s*)classpath 'com.android.tools.build(.*)/m);
   var whitespace = match[1];
-  
+
   // modify the line to add the necessary dependencies
-  var googlePlayDependency = whitespace + 'classpath \'com.google.gms:google-services:4.2.0\' // google-services dependency from cordova-plugin-firebase';
+  var googlePlayDependency = whitespace + 'classpath \'com.google.gms:google-services:4.3.3\' // google-services dependency from cordova-plugin-firebase';
   var fabricDependency = whitespace + 'classpath \'io.fabric.tools:gradle:1.25.4\' // fabric dependency from cordova-plugin-firebase'
   var modifiedLine = match[0] + '\n' + googlePlayDependency + '\n' + fabricDependency;
-  
+
   // modify the actual line
   return buildGradle.replace(/^(\s*)classpath 'com.android.tools.build(.*)/m, modifiedLine);
 }
@@ -95,7 +95,7 @@ module.exports = {
 
     // Add Google Play Services Dependency
     buildGradle = addDependencies(buildGradle);
-  
+
     // Add Google's Maven Repo
     buildGradle = addRepos(buildGradle);
 
@@ -112,7 +112,7 @@ module.exports = {
 
     // remove any lines we added
     buildGradle = buildGradle.replace(/(?:^|\r?\n)(.*)cordova-plugin-firebase*?(?=$|\r?\n)/g, '');
-  
+
     writeRootBuildGradle(buildGradle);
   }
 };
